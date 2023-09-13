@@ -6,8 +6,10 @@ import SignIn from './pages/SignIn';
 import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
 import PublicRoute from './components/PublicRoute';
+import { ProfileProvider } from './context/profile.context';
 function App() {
   return (
+    <ProfileProvider>
     <Routes>
       <Route path='/signin' element={
         <PublicRoute>
@@ -20,6 +22,7 @@ function App() {
           </PrivateRoute>
       }/>
     </Routes>
+    </ProfileProvider>
   );
 }
 
