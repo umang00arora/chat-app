@@ -1,12 +1,19 @@
 import React from 'react'
-import { Button, Col, Container, Grid, Icon, Panel, Row, Message } from 'rsuite';
+import { Button, Col, Container, Grid, Panel, Row, Message, Notification, useToaster } from 'rsuite';
 import GooglePlusCircleIcon from '@rsuite/icons/legacy/GooglePlusCircle';
 import FacebookOfficialIcon from '@rsuite/icons/legacy/FacebookOfficial';
 import  {auth, database}  from '../misc/firebase';
 import firebase from 'firebase/compat/app';
-import Alert from '../components/Alert';
+//import Alert from '../components/Alert';
 
 const SignIn = () => {
+    const toaster = useToaster();
+
+    const message = (
+      <Notification type='info' header="Signed In" closable duration={3000}>
+        
+      </Notification>
+    );
 
     const signInWithProvider= async (provider)=>{
        
@@ -18,7 +25,7 @@ const SignIn = () => {
                 createdAt: firebase.database.ServerValue.TIMESTAMP
             })
         }
-        <Alert/>
+        toaster.push(message)
        } catch (error) {
         <Message type="error">Login Failed , {error.Message}</Message>
        }
