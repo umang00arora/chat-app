@@ -3,7 +3,7 @@ import { Input, InputGroup,useToaster,Notification } from 'rsuite'
 import { Icon } from '@rsuite/icons';
 import { IoCloseCircleSharp,IoBrush,IoCheckmark} from 'react-icons/io5';
 
-const EditableInput = ({initialValue,onSave,label=null,placeholder="Write your value..",emptyMsg="Input is empty.",...inputProps}) => {
+const EditableInput = ({initialValue,onSave,label=null,placeholder="Write your value..",emptyMsg="Input is empty.",wrapperClassName='',...inputProps}) => {
     const toaster = useToaster();
 
     const message = (
@@ -39,7 +39,7 @@ const EditableInput = ({initialValue,onSave,label=null,placeholder="Write your v
     )
     
   return (
-    <div>
+    <div className={wrapperClassName}>
       {label}
       <InputGroup>
       <Input {...inputProps} placeholder={placeholder} onChange={onInputChange} value={input} disabled={!isEditable}/>

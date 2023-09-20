@@ -4,7 +4,7 @@ import { Icon } from '@rsuite/icons';
 import { } from 'react-icons/io5';
 import { useModalState } from '../misc/custom-hooks';
 import firebase from 'firebase/compat/app';
-import { database } from '../misc/firebase';
+import { auth, database } from '../misc/firebase';
 
 
 const Textarea = React.forwardRef((props, ref) => <Input {...props} as="textarea" ref={ref} />);
@@ -44,7 +44,10 @@ const CreateRoomBtnModal = () => {
 
     const newRoomData ={ 
         ...formValue,
-        createdAt: firebase.database.ServerValue.TIMESTAMP
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        admins: {
+          [auth.currentUser.uid]: true
+        }
     }
 
     try {
@@ -60,12 +63,12 @@ const CreateRoomBtnModal = () => {
   }
 
     return (
-    <div className='mt-2'>
+    <div className='mt-2' >
       <Button appearance='primary' block color='green' onClick={open}>
         <Icon/> Create new Chat Room
       </Button>
 
-      <Modal open={isOpen}>
+      <Modal open={isOpen} onClose={close}>
         <Modal.Header>
         <Modal.Title>New Chat Room</Modal.Title>
         </Modal.Header>

@@ -5,6 +5,7 @@ import AvatarEditor from 'react-avatar-editor'
 import { useProfile } from '../../context/profile.context';
 import { database, storage } from '../../misc/firebase';
 import ProfileAvatar from './ProfileAvatar';
+import { getUserUpdates } from '../../misc/helper';
 
 const fileInputTypes =".png, .jpeg, .jpg";
 const acceptedFiles = ['image/png' , 'image/jpeg' , 'image/pjpeg' , 'image/jpg'];
@@ -59,9 +60,12 @@ const AvatarUploadBtn = () => {
                 cacheControl: `public, max-age=${3600*24*3}`
             })
             const downloadUrl = await uploadAvatarResult.ref.getDownloadURL()
-            const userAvatarRef = database.ref(`/profiles/${profile.uid}`).child('avatar')
-            userAvatarRef.set(downloadUrl)
+
+            const updates=await getUserUpdates(profile.uid,'avatar',downloadUrl,database)
+            await database.ref().update(updates)
+
             setIsLoading(false)
+            close()
             toaster.push(avtUpld)
         } catch (error) {
             console.log(error.message)

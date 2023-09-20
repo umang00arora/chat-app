@@ -5,6 +5,7 @@ import EditableInput from './EditableInput';
 import { database } from '../../misc/firebase';
 import ProviderBlock from './ProviderBlock';
 import AvatarUploadBtn from './AvatarUploadBtn';
+import { getUserUpdates } from '../../misc/helper';
 
 const Dashboard = ({onSignOut}) => {
   const {profile} = useProfile();
@@ -17,10 +18,11 @@ const Dashboard = ({onSignOut}) => {
       <Notification type='error' header="Error" closable duration={3000}></Notification>
     );
   const onSave = async (newData) =>{
-    const userNicknameRef = database.ref(`/profiles/${profile.uid}`).child('name');
 
     try {
-      await userNicknameRef.set(newData);
+     // await userNicknameRef.set(newData);
+      const updates=await getUserUpdates(profile.uid, 'name', newData, database)
+      await database.ref().update(updates)
       toaster.push(message)
     } catch (error) {
       toaster.push(err);
