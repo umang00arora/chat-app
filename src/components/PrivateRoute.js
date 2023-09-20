@@ -16,6 +16,7 @@ const PrivateRoute = ({children , ...routeProps}) => {
   }
   
   if(!profile && !isLoading){
+        console.log("sajkka")
         return <Navigate to='/signin'/>
     }
 

@@ -7,8 +7,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home/index';
 import PublicRoute from './components/PublicRoute';
 import { ProfileProvider } from './context/profile.context';
-import { Col } from 'rsuite';
-import Chat from './pages/Home/Chat';
+
 function App() {
   return (
     <ProfileProvider>
@@ -18,16 +17,12 @@ function App() {
           <SignIn/>
         </PublicRoute>
       }/>
-      <Route path='/' element={
+      <Route path='/*' element={
         <PrivateRoute>
           <Home/>
         </PrivateRoute>
       }>
-        <Route exct path="/chat/:chatId" element={
-            <Col>
-            <Chat/>
-            </Col>
-          }/>
+        
       </Route>
     </Routes>
     </ProfileProvider>
