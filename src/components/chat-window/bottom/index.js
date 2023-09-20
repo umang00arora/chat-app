@@ -1,11 +1,13 @@
 import React, { useCallback, useState } from 'react'
-import { Input, InputGroup, Button, useToaster } from 'rsuite'
+import { Input, InputGroup, Button, useToaster, Notification } from 'rsuite'
 import {Icon} from '@rsuite/icons'
 import { IoSendSharp } from 'react-icons/io5'
 import firebase from 'firebase/compat/app'
 import { useProfile } from '../../../context/profile.context'
 import { useParams } from 'react-router-dom'
 import { database } from '../../../misc/firebase'
+import AttachmentBtn from './AttachmentBtn'
+import AudioMsgBtn from './AudioMsgBtn'
 
 
 function assembleMessage(profile,chatId){
@@ -60,13 +62,42 @@ const Bottom = () => {
       setInput('')
       setIsLoading(false)
     } catch (error) {
+      console.log(error.message)
       setIsLoading(false);
       toaster.push(message)
     }
   }
+
+  const afterUpload = useCallback(async (files)=>{
+    setIsLoading(true)
+    const updates = {}
+    files.forEach(file => {
+      const msgData = assembleMessage(profile, chatId)
+      msgData.file = file;
+
+      const messageId = database.ref('messages').push().key;
+      updates[`/messages/${messageId}`]=msgData;
+    })
+    const lastMsgId = Object.keys(updates).pop()
+    updates[`/rooms/${chatId}/lastMessage`] = {
+      ...updates[lastMsgId],
+      msgId: lastMsgId,
+    };
+    try {
+      await database.ref().update(updates)
+      setInput('')
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false);
+      toaster.push(message)
+    }
+  },[chatId,profile])
+
   return (
     <div>
       <InputGroup>
+      <AttachmentBtn afterUpload={afterUpload}/>
+      <AudioMsgBtn afterUpload={afterUpload}/>
         <Input placeholder='Write a new message here ...' value={input} onChange={onInputChange} onPressEnter={onSendClick}/>
         <InputGroup.Button color='blue' appearance="primary" onClick={onSendClick} disabled={isLoading}>
            <Icon as={IoSendSharp}/>

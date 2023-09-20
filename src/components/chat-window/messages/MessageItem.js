@@ -8,10 +8,25 @@ import { useCurrentRoom } from '../../../context/current-room.context'
 import { auth } from '../../../misc/firebase'
 import { useHover } from '../../../misc/custom-hooks'
 import IconBtnControl from './IconBtnControl'
+import ImgBtnModal from './ImgBtnModal'
 
+const renderFileMsg = (file) => {
+  if(file.contentType.includes('image')){
+    return <div className="height-220">
+      <ImgBtnModal src={file.url} filename={file.name}/>
+    </div>
+  }
+  if(file.contentType.includes('audio')){
+    return <audio controls>
+      <source src={file.url} type='audio/mp3'/>
+      Your Browser does not support audio file.
+    </audio>
+  }
+  return <a href={file.url} target='_blank'>Download {file.name}</a>
+}
 const MessageItem = ({message, handleAdmin, handleLike, handleDelete}) => {
   const [selfRef, isHover] = useHover()
-  const {author,createdAt,text, likes, likeCount} = message
+  const {author,createdAt,text,file, likes, likeCount} = message
   const isAdmin = useCurrentRoom(v=>v.isAdmin)
   const admins = useCurrentRoom(v=>v.admins)
   const isMsgAuthorAdmin = admins.includes(author.uid);
@@ -45,14 +60,15 @@ const MessageItem = ({message, handleAdmin, handleLike, handleDelete}) => {
           isVisible
           iconName="close"
           tooltip="Delete This Message"
-          onClick={()=>handleDelete(message.id)} 
+          onClick={()=>handleDelete(message.id , file)} 
           />
         }
       
       </div>
 
       <div>
-        <span className='word-break-all'>{text}</span>
+        {text && <span className='word-break-all'>{text}</span>}
+        {file && renderFileMsg(file)}
       </div>
     </li>
   )
